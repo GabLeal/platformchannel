@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:platformchannel/screen1.dart';
+import 'package:platformchannel/screen2.dart';
 
 void main() {
   runApp(const MyApp());
@@ -59,7 +60,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const Screen1(),
+                    builder: (context) => const Screen2(),
                   ),
                 );
               },
