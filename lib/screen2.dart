@@ -27,7 +27,7 @@ class _Screen2State extends State<Screen2> {
                 } else {
                   return const Center(
                     child: Text(
-                      "Sem temperatura informada. Antes de alterar a temperatura no emulador",
+                      "Sem temperatura informada. Antes de alterar a temperatura no emulador é preciso ativar o sensor.",
                       textAlign: TextAlign.center,
                     ),
                   );
@@ -36,7 +36,6 @@ class _Screen2State extends State<Screen2> {
             ),
             ElevatedButton(
               onPressed: () {
-                //_channel.openPermissionSettings();
                 Navigator.pop(context);
               },
               child: const Text(

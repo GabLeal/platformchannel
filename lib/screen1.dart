@@ -24,18 +24,11 @@ class _Screen1State extends State<Screen1> {
               min: 1,
               max: 255,
               value: currentValue,
-              onChanged: (value) {
-                _showPermissionDialog();
-                setState(() {
-                  currentValue = value;
-                });
-              },
+              onChanged: (value) {},
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              //_channel.openPermissionSettings();
-            },
+            onPressed: () {},
             child: const Text('Verificar permissao'),
           ),
         ],
@@ -59,7 +52,6 @@ class _Screen1State extends State<Screen1> {
             ),
             ElevatedButton(
               onPressed: () {
-                //_channel.openPermissionSettings();
                 Navigator.pop(context);
               },
               child: const Text('Permissões'),
