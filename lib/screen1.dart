@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:platformchannel/channel.dart';
 
 class Screen1 extends StatefulWidget {
   const Screen1({Key? key}) : super(key: key);
@@ -9,6 +10,7 @@ class Screen1 extends StatefulWidget {
 
 class _Screen1State extends State<Screen1> {
   var currentValue = 10.0;
+  final _channel = Channel();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +27,7 @@ class _Screen1State extends State<Screen1> {
               max: 255,
               value: currentValue,
               onChanged: (value) {
-                _showPermissionDialog();
+                _channel.changeBrightnessScreen(value.toInt());
                 setState(() {
                   currentValue = value;
                 });
@@ -33,10 +35,16 @@ class _Screen1State extends State<Screen1> {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              //_channel.openPermissionSettings();
+            onPressed: () async {
+              var status = await _channel.checkPermission();
+
+              if (status == false) {
+                _showPermissionDialog();
+              }
             },
-            child: const Text('Verificar permissao'),
+            child: const Text(
+              'Verificar permissao',
+            ),
           ),
         ],
       ),
@@ -58,8 +66,8 @@ class _Screen1State extends State<Screen1> {
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
-              onPressed: () {
-                //_channel.openPermissionSettings();
+              onPressed: () async {
+                await _channel.openPermissionSettings();
                 Navigator.pop(context);
               },
               child: const Text('Permissões'),
