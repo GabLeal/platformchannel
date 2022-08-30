@@ -36,7 +36,11 @@ class _Screen2State extends State<Screen2> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                const snackBar = SnackBar(
+                  content: Text('Sensor ativado'),
+                  backgroundColor: (Colors.blue),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
               },
               child: const Text(
                 'Ativar sensor de temperatura',
