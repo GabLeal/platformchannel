@@ -37,7 +37,7 @@ class _MethodChannelExamplePageState extends State<MethodChannelExamplePage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              var status = await _brightnessChannel.checkPermission();
+              bool status = await _brightnessChannel.checkPermission();
 
               if (status == false) {
                 _showPermissionDialog();
