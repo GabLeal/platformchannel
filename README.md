@@ -7,9 +7,9 @@ Os métodos que serão abordados funcionam tanto para se comunicar em Kotlin qua
 plataforma android, pois conseguimos mostrar exemplos mais interessantes com os recursos disponiveis no emulador, pois o simulador do iOS é limitado em relação a recursos como conectividade com sensores, por exemplo.
 
 ## Exemplos que essa aplicação oferece
-[Modificar o brilho da tela do sistema operacional do android através de um componente no flutter.](#modificar-o-brilho-da-tela-do-sistema-operacional)
+[Modificar o brilho da tela do sistema operacional através de um componente no flutter.](#modificar-o-brilho-da-tela-do-sistema-operacional)
 
-[Utilizar o sensor de temperatura ambiente do emulador do android e exibir o valor da temperatura em tempo real no Flutter.](#sensor-de-temperatura)
+[Utilizar o sensor de temperatura ambiente do emulador e exibir o valor da temperatura em tempo real no Flutter.](#sensor-de-temperatura)
 
 ## Teoria
 
