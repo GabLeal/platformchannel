@@ -401,10 +401,11 @@ _temperature.activeSensor();
 Feito isso podemos compilar o aplicativo e para testar vamos realizar os seguintes passos no emulador:
 
 1 - vamos clicar nos ícone dos três pontinhos. Ultimo ícone da barra que fica do lado do emulador
+<img title="dots emulator" alt="Alt text" src="screenshot/dots_emulator.png">
+
 2 - Selecione a opção "Virtual sensors”.
-[IMAGEM]
+<img title="virtual sensors emulator" alt="Alt text" src="screenshot/virtual_sensors_emulator.png">
+
 3 - Nessa tela você terá acesso a vários sensores que temos em um dispositivo android. No nosso caso vamos utilizar o sensor de "Ambient temperature".
-[IMAGEM]
 
-
-
+<img title="ambient temperature emulator" alt="Alt text" src="screenshot/ambient_temperature_emulator.png">
