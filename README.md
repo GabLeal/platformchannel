@@ -309,9 +309,9 @@ O método `onSensorChanged` é chamado toda vez que o valor da temperatura ambie
 
 Nesse exemplo não precisamos usar a função `onAccuracyChanged`, porém precisamos ter ela implementada pois faz parte do contrato da nossa interface.
 
-O metodo onListen é o responsável por configurar o nosso canal de eventos que irá transmitir os dados do nativo para o flutter.
+O metodo `onListen` é o responsável por configurar o nosso canal de eventos que irá transmitir os dados do nativo para o flutter.
 
-E por ultimo, o método onCancel que serve para limpar nossa stream e cancelar o registro do sensor. Fazer isso é uma boa prática para não consumir recursos quando não estivermos mais usando o sensor.
+E por ultimo, o método `onCancel` que serve para limpar nossa stream e cancelar o registro do sensor. Fazer isso é uma boa prática para não consumir recursos quando não estivermos mais usando o sensor.
 
 Agora que temos nossa classe de stream criada, basta criarmos uma instância dela na nossa classe MainActivity e passar essa instância no parâmetro do método `setStreamHandler` do EventChannel.
 
@@ -319,31 +319,11 @@ Agora que temos nossa classe de stream criada, basta criarmos uma instância del
 private var temperature: Temperature = Temperature()
 ```
 
-Outro ponto importante é que antes de usarmos o sensor nós precisamos ativar ele. Para fazer isso, na nossa classe temperature.dart vamos criar um MethodChannel que vai ativar o sensor no lado do Kotlin. Como já aprendemos como o MethodChannel funciona no exemplo anterior vou apenas deixar disponível o trecho de código que deve ser colado na nossa classe.
+Outro ponto importante é que antes de usarmos o sensor nós precisamos ativar ele. Para fazer isso, nos vamos usar o MethodChannel que está dentro da classe `temperature_channel.dart`. Sendo assim, como feito no exemplo anterior, vamos definir esse novo methodChannel do lado do nativo. O trecho abaixo pode ser colocado abaixo do EventChannel que criamos em MainActivity.kt.
 
-```
-static const MethodChannel _active_sensor_channel = MethodChannel('sensor/temperature/activesensor');
-```
 
-Função que aciona metodo nativo
-
-```
-  Future<void> activeSensor() async {
-    try {
-      var result = await _active_sensor_channel.invokeMethod('activeSensor');
-      log(result.toString());
-    } catch (e) {
-      log(e.toString());
-    }
-  }
-```
-
-Criação do canal sensor/temperature/activesensor no lado nativo.
-
-Esse trecho pode ser colado abaixo do EventChannel que criamos em MainActivity.kt.
-
-```
-  MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sensor/temperature/activesensor").setMethodCallHandler { call, result ->
+```dart
+  MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.example.platformchannel/sensor/activesensor").setMethodCallHandler { call, result ->
       when(call.method){
           "activeSensor" ->{
               temperature.start(this.context)
@@ -356,18 +336,17 @@ Esse trecho pode ser colado abaixo do EventChannel que criamos em MainActivity.k
   }
 ```
 
-Feito isso, podemos ir no nosso arquivo screen2.dart é criar uma instância da nossa classe temperature.dart. Dentro do Widget stream controller vamos atribuir ao parâmetro stream (linha 3) o nosso getTemperatureStream que está dentro da classe temperature.
+Feito isso, podemos ir no nosso arquivo `event_channel_example_page.dart` e criar uma instância da classe `TemperatureChannel`. Dentro do Widget `StreamBuilder` vamos atribuir ao parâmetro stream o nosso método `getTemperatureStream` que foi instanciada.
 
 Criação da instância
-```
-final _temperature = Temperature();
+```dart
+final _temperatureChannel = TemperatureChannel();
 ```
 
 Atribuindo valor para o parâmetro stream
-
-```
+```dart
   StreamBuilder<double>(
-    stream: _temperature.getTemperatureStream,
+    stream: _temperatureChannel.getTemperatureStream,
     builder:
         (BuildContext context, AsyncSnapshot<double> snapshot) {
       if (snapshot.hasData) {
@@ -384,20 +363,20 @@ Atribuindo valor para o parâmetro stream
   ),
 ```
 
-Por último, no botão Ativar sensor de temperatura vamos chamar a função activeSensor
+Por último, no botão "Ativar sensor de temperatura" vamos chamar a função activeSensor
 
+```dart
+  _temperatureChannel.activeSensor();
 ```
-_temperature.activeSensor();
-```
 
-Feito isso podemos compilar o aplicativo e para testar vamos realizar os seguintes passos no emulador:
+Feito isso, podemos compilar o aplicativo e para testar vamos realizar os seguintes passos no emulador:
 
-1 - vamos clicar nos ícone dos três pontinhos. Ultimo ícone da barra que fica do lado do emulador
+1. Clicar no ícone dos três pontinhos. Último ícone da barra que fica do lado do emulador
 <img title="dots emulator" alt="Alt text" src="screenshot/dots_emulator.png">
 
-2 - Selecione a opção "Virtual sensors”.
+2. Selecione a opção "Virtual sensors”.
 <img title="virtual sensors emulator" alt="Alt text" src="screenshot/virtual_sensors_emulator.png">
 
-3 - Nessa tela você terá acesso a vários sensores que temos em um dispositivo android. No nosso caso vamos utilizar o sensor de "Ambient temperature".
+3. Nessa tela você terá acesso a vários sensores que temos em um dispositivo android. No nosso caso vamos utilizar o sensor de "Ambient temperature".
 
 <img title="ambient temperature emulator" alt="Alt text" src="screenshot/ambient_temperature_emulator.png">
