@@ -11,13 +11,16 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
 
-    private val CHANNEL = "br.com.brightness"
+    private val BRIGHTNESSS_CHANNEL_NAME = "com.example.platformchannel/brightness"
+    private val TEMPERATURE_SENSOR_CHANNEL_NAME = "com.example.platformchannel/sensor/temperature"
+    private val ACTIVE_SENSOR_CHANNEL_NAME = "com.example.platformchannel/sensor/activesensor"
+
     private var temperature: Temperature =  Temperature()
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, BRIGHTNESSS_CHANNEL_NAME).setMethodCallHandler { call, result ->
             when(call.method){
                 "checkPermission" ->{
                     val settingsCanWrite = Settings.System.canWrite(context)
@@ -42,9 +45,9 @@ class MainActivity: FlutterActivity() {
             }
         }
 
-        EventChannel(flutterEngine.dartExecutor.binaryMessenger, "sensor/temperature").setStreamHandler(temperature)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, TEMPERATURE_SENSOR_CHANNEL_NAME).setStreamHandler(temperature)
 
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sensor/temperature/activesensor").setMethodCallHandler { call, result ->
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, ACTIVE_SENSOR_CHANNEL_NAME).setMethodCallHandler { call, result ->
             when(call.method){
                 "activeSensor" ->{
                     temperature.start(this.context)

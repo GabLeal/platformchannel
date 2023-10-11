@@ -5,11 +5,11 @@ import 'package:flutter/services.dart';
 
 class TemperatureChannel {
   final EventChannel _temperatureChannel = const EventChannel(
-    'sensor/temperature',
+    'com.example.platformchannel/sensor/temperature',
   );
 
   final MethodChannel _activeSensorChannel = const MethodChannel(
-    'sensor/temperature/activesensor',
+    'com.example.platformchannel/sensor/activesensor',
   );
 
   final StreamController<double> _streamController = StreamController<double>();
