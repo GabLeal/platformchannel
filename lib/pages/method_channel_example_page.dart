@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:platformchannel/channels/brightness_channel.dart';
 
-class Screen1 extends StatefulWidget {
-  const Screen1({Key? key}) : super(key: key);
+class MethodChannelExamplePage extends StatefulWidget {
+  const MethodChannelExamplePage({Key? key}) : super(key: key);
 
   @override
-  _Screen1State createState() => _Screen1State();
+  _MethodChannelExamplePageState createState() =>
+      _MethodChannelExamplePageState();
 }
 
-class _Screen1State extends State<Screen1> {
+class _MethodChannelExamplePageState extends State<MethodChannelExamplePage> {
   var currentValue = 10.0;
   final _brightnessChannel = BrightnessChannel();
   @override

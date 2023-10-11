@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:platformchannel/channels/temperature_channel.dart';
 
-class Screen2 extends StatefulWidget {
-  const Screen2({Key? key}) : super(key: key);
+class EventChannelExamplePage extends StatefulWidget {
+  const EventChannelExamplePage({Key? key}) : super(key: key);
 
   @override
-  _Screen2State createState() => _Screen2State();
+  _EventChannelExamplePageState createState() =>
+      _EventChannelExamplePageState();
 }
 
-class _Screen2State extends State<Screen2> {
+class _EventChannelExamplePageState extends State<EventChannelExamplePage> {
   final _temperatureChannel = TemperatureChannel();
   @override
   Widget build(BuildContext context) {
