@@ -380,3 +380,8 @@ Feito isso, podemos compilar o aplicativo e para testar vamos realizar os seguin
 3. Nessa tela você terá acesso a vários sensores que temos em um dispositivo android. No nosso caso vamos utilizar o sensor de "Ambient temperature".
 
 <img title="ambient temperature emulator" alt="Alt text" src="screenshot/ambient_temperature_emulator.png">
+
+
+Ao testar o app ele deve se parecer com o resultado abaixo:
+
+<img title="gif do exemplo do sensor de temperatura" alt="Alt text" src="screenshot/sensor_example.gif">
