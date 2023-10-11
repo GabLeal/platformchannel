@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:platformchannel/channel.dart';
+import 'package:platformchannel/channels/brightness_channel.dart';
 
 class Screen1 extends StatefulWidget {
   const Screen1({Key? key}) : super(key: key);
@@ -10,7 +10,7 @@ class Screen1 extends StatefulWidget {
 
 class _Screen1State extends State<Screen1> {
   var currentValue = 10.0;
-  final _channel = Channel();
+  final _brightnessChannel = BrightnessChannel();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +27,7 @@ class _Screen1State extends State<Screen1> {
               max: 255,
               value: currentValue,
               onChanged: (value) {
-                _channel.changeBrightnessScreen(value.toInt());
+                _brightnessChannel.changeBrightnessScreen(value.toInt());
                 setState(() {
                   currentValue = value;
                 });
@@ -36,11 +36,18 @@ class _Screen1State extends State<Screen1> {
           ),
           ElevatedButton(
             onPressed: () async {
-              var status = await _channel.checkPermission();
+              var status = await _brightnessChannel.checkPermission();
 
               if (status == false) {
                 _showPermissionDialog();
+                return;
               }
+
+              const snackBar = SnackBar(
+                content: Text('Você já possui permissão.'),
+                backgroundColor: (Colors.blue),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             },
             child: const Text(
               'Verificar permissao',
@@ -67,7 +74,7 @@ class _Screen1State extends State<Screen1> {
             ),
             ElevatedButton(
               onPressed: () async {
-                await _channel.openPermissionSettings();
+                await _brightnessChannel.openPermissionSettings();
                 Navigator.pop(context);
               },
               child: const Text('Permissões'),

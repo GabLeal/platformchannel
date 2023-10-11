@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:platformchannel/temperature.dart';
+import 'package:platformchannel/channels/temperature_channel.dart';
 
 class Screen2 extends StatefulWidget {
   const Screen2({Key? key}) : super(key: key);
@@ -9,7 +9,7 @@ class Screen2 extends StatefulWidget {
 }
 
 class _Screen2State extends State<Screen2> {
-  final _temperature = Temperature();
+  final _temperatureChannel = TemperatureChannel();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +26,7 @@ class _Screen2State extends State<Screen2> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               StreamBuilder<double>(
-                stream: _temperature.getTemperatureStream,
+                stream: _temperatureChannel.getTemperatureStream,
                 builder:
                     (BuildContext context, AsyncSnapshot<double> snapshot) {
                   if (snapshot.hasData) {
@@ -43,7 +43,7 @@ class _Screen2State extends State<Screen2> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  _temperature.activeSensor();
+                  _temperatureChannel.activeSensor();
                   const snackBar = SnackBar(
                     content: Text('Sensor ativado'),
                     backgroundColor: (Colors.blue),

@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/services.dart';
 
-class Temperature {
+class TemperatureChannel {
   final EventChannel _temperatureChannel = const EventChannel(
     'sensor/temperature',
   );
@@ -14,7 +14,7 @@ class Temperature {
 
   final StreamController<double> _streamController = StreamController<double>();
 
-  Temperature() {
+  TemperatureChannel() {
     _temperatureChannel.receiveBroadcastStream().listen((event) {
       log(event.toString());
       _streamController.sink.add(event);

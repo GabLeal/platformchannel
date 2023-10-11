@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/services.dart';
 
-class Channel {
+class BrightnessChannel {
   final _brightnessChannel = const MethodChannel('br.com.brightness');
 
   Future<bool> checkPermission() async {
