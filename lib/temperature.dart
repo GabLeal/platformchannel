@@ -4,16 +4,18 @@ import 'dart:developer';
 import 'package:flutter/services.dart';
 
 class Temperature {
-  static const EventChannel _temperature_channel =
-      EventChannel('sensor/temperature');
+  final EventChannel _temperatureChannel = const EventChannel(
+    'sensor/temperature',
+  );
 
-  static const MethodChannel _active_sensor_channel =
-      MethodChannel('sensor/temperature/activesensor');
+  final MethodChannel _activeSensorChannel = const MethodChannel(
+    'sensor/temperature/activesensor',
+  );
 
   final StreamController<double> _streamController = StreamController<double>();
 
   Temperature() {
-    _temperature_channel.receiveBroadcastStream().listen((event) {
+    _temperatureChannel.receiveBroadcastStream().listen((event) {
       log(event.toString());
       _streamController.sink.add(event);
     }, onError: (e) {
@@ -31,7 +33,7 @@ class Temperature {
 
   Future<void> activeSensor() async {
     try {
-      var result = await _active_sensor_channel.invokeMethod('activeSensor');
+      var result = await _activeSensorChannel.invokeMethod('activeSensor');
       log(result.toString());
     } catch (e) {
       log(e.toString());
