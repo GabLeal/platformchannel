@@ -193,27 +193,29 @@ Feito isso, basta rodar o aplicativo e realizar o teste. Vale ressaltar que se v
 `observação:` Se você emular este exemplo pelo computador só conseguirá ver o brilho mudando por conta da barra do próprio sistema operacional que é alterada. Contudo, quando forem testar recomendo emular este primeiro exemplo no device físico para verem a intensidade do brilho mudando.
 
 ### 🌡️ Sensor de temperatura
-O próximo exemplo que vamos criar é o de enviar dados do sensor de temperatura do android para o Flutter. Este exemplo é um pouco diferente, como não sabemos exatamente em que momento o Kotlin vai enviar os dados para o Flutter não podemos usar o MethodChannel, pois ele abre uma comunicação e depois que os dados são transmitidos o fluxo se encerra. Nesse caso, nós iremos usar o EventChannel, que deixa um canal aberto, onde pode ter dados sendo transmitidos do lado nativo para o Flutter a qualquer momento. O seu fluxo é baseado em Stream (recomendo dar uma estudada em stream caso ainda não saiba como ele funciona).
+O próximo exemplo que vamos criar é o de enviar dados do sensor de temperatura do android para o Flutter. Este exemplo é um pouco diferente, como não sabemos exatamente em que momento o Kotlin vai enviar os dados para o Flutter não podemos usar o MethodChannel, pois ele abre uma comunicação e depois que os dados são transmitidos o fluxo se encerra. Nesse caso, nós iremos usar o EventChannel, que deixa um canal aberto, onde pode ter dados sendo transmitidos do lado nativo para o Flutter a qualquer momento. O seu fluxo é baseado em Stream (recomendo dar uma estudada em stream caso ainda não saiba como ela funciona).
 
-Primeiro, nós precisamos criar um novo arquivo chamado temperature.dart e colar o trecho de código abaixo:
+Primeiro, nós precisamos criar um novo arquivo chamado `temperature_channel.dart` e colar o trecho de código abaixo:
 
-```
+```dart
 import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/services.dart';
 
-class Temperature {
-  static const EventChannel _temperature_channel =
-      EventChannel('sensor/temperature');
+class TemperatureChannel {
+  final EventChannel _temperatureChannel = const EventChannel(
+    'com.example.platformchannel/sensor/temperature',
+  );
 
-  static const MethodChannel _active_sensor_channel =
-      MethodChannel('sensor/temperature/activesensor');
+  final MethodChannel _activeSensorChannel = const MethodChannel(
+    'com.example.platformchannel/sensor/activesensor',
+  );
 
   final StreamController<double> _streamController = StreamController<double>();
 
-  Temperature() {
-    _temperature_channel.receiveBroadcastStream().listen((event) {
+  TemperatureChannel() {
+    _temperatureChannel.receiveBroadcastStream().listen((event) {
       log(event.toString());
       _streamController.sink.add(event);
     }, onError: (e) {
@@ -231,26 +233,25 @@ class Temperature {
 
   Future<void> activeSensor() async {
     try {
-      var result = await _active_sensor_channel.invokeMethod('activeSensor');
+      var result = await _activeSensorChannel.invokeMethod('activeSensor');
       log(result.toString());
     } catch (e) {
       log(e.toString());
     }
   }
 }
-
 ```
 
-Explicando o código, na linha 7 nós criamos um objeto do tipo EventChannel e passamos uma String única para representar o nome desse canal. Na linha 9 nós criar um StreamController do tipo double. Esse controlador vai ser responsável por armazenar os valores que recebemos do nativo. Na função da linha 20 temos um método get para retornar a nossa stream. Esse get será usado na tela da screen2.dart dentro do nosso streamBuilder. Na linha 24 temos o método dispose para limpar a nossa stream quando não estiver mais usando ela. Fazer isso é uma boa prática para limpar recursos que podem ficar consumindo memória do dispositivo. E por último, temos o método construtor da classe que vai da linha 11 atá a 18, local onde a “mágica” acontece. Dentro do método construtor nós pegamos a nossa instânciado eventChannel e acessamos a propriedade receiveBroadcastStream. Essa propriedade configura um fluxo de transmissão para receber eventos no canal que nós criamos. Depois disso, acessamos o Listen para ouvir todos os eventos que chegam nesse fluxo e na linha 14 pegamos todos os dados que recebemos do nativo e jogamos dentro do nosso streamController.
+No código acima foi criado um objeto do tipo EventChannel que recebe uma String única para representar o nome desse canal. Bem como, foi criado um StreamController do tipo double, esse controlador vai ser responsável por armazenar os valores que recebidos do nativo. O método get `getTemperatureStream` serve para retornar a nossa stream, ele será usado na tela `event_channel_example_page.dart` dentro de um streamBuilder. Além disso, temos o método dispose para limpar a stream quando ela não estiver sendo utilizada. Fazer isso é uma boa prática para limpar recursos que podem ficar consumindo memória do dispositivo. E por último, temos o método construtor da classe, local onde a “mágica” acontece, e uma função responsável por ativa o sensor de temperatura. Dentro do método construtor nós pegamos a nossa instânciado `_temperatureChannel` e acessamos a propriedade `receiveBroadcastStream`. Essa propriedade configura um fluxo de transmissão para receber eventos no canal que nós criamos. Depois disso, acessamos o `listen` para ouvir todos os eventos que chegam nesse fluxo e pegamos todos os dados que recebemos do nativo e jogamos dentro do nosso streamController por meio da função `add`.
 
-Agora do lado nativo vamos criar a comunicação com o EventChannel. Para fazer isso é simples, basta nós usarmos o seguinte código.
+Agora, do lado nativo vamos criar a comunicação com o EventChannel. Para fazer isso é simples, basta nós usarmos o seguinte código dentro do função `configureFlutterEngine`, abaixo do `MethodChannel` que foi criado anteriormente.
 
+```dart
+EventChannel(flutterEngine.dartExecutor.binaryMessenger, "com.example.platformchannel/sensor/temperature").setStreamHandler(YOUR_STREAM)
 ```
-EventChannel(flutterEngine.dartExecutor.binaryMessenger, "sensor/temperature").setStreamHandler(YOUR_STREAM)
-```
-Ele é semelhante ao MethodChannel, porém usamos o método setStreamHandler e no lugar de YOUR_STREAM nós devemos passar um objeto que seja uma stream. Agora, no código nativo, no mesmo diretório onde temos o MainActivity vamos criar uma classe chamada Temperature.kt e colocaremos o código abaixo.
+Ele é semelhante ao MethodChannel, porém usamos o método setStreamHandler e no lugar de YOUR_STREAM nós devemos passar um objeto que seja uma stream. Agora, no código nativo, no mesmo diretório onde temos o `MainActivity.kt` vamos criar uma classe chamada `Temperature.kt` e colocaremos o código abaixo.
 
-```
+```kotlin
 package com.example.platformchannel
 
 import android.content.Context
@@ -293,27 +294,26 @@ class Temperature : SensorEventListener, EventChannel.StreamHandler {
 
 }
 ```
-Essa classe, basicamente é responsável por três coisas: Criar e inicializar nosso sensor e por último publicar os valores obtidos na nossa stream, os quais receberemos no Flutter.
+Essa classe, basicamente é responsável por: Inicializar nosso sensor e publicar os valores obtidos na nossa stream, os quais receberemos no Flutter.
 
-Como dito anteriormente, precisamos que essa classe seja uma stream para usarmos no nosso EventChannel. Além disso, precisamos encontrar uma forma dessa classe obter os dados do sensor de temperatura do Android.
-Na linha 10, resolvemos os dois problemas, pois criamos uma classe chamada Temperature e implementamos duas classes:
-1 - SensorEventListener : Classe que nós permite obter dados dos sensores no android. Quando implementamos essa classe temos que fazer o override de duas funções: onSensorChanged e onAccuracyChanged.
-2 - EventChannel.StreamHandler : Interface que diz que nossa classe pode ser uma stream. Quando usamos ela também precisamos fazer o override de duas funções: onListen e onCancel.
+Como dito anteriormente, precisamos que essa classe seja uma stream para usarmos no nosso EventChannel. Além disso, precisamos encontrar uma forma dessa classe obter os dados do sensor de temperatura do Android. Para fazer isso, será necessario implementarmos duas classes:
+
+1. `SensorEventListener:` Classe que permite obter dados dos sensores no android. Ao implementar essa classe é possível fazer o override de duas funções: `onSensorChanged` e `onAccuracyChanged`.
+2. `EventChannel.StreamHandler` : Interface que diz que a classe pode ser uma stream. Quando ela é utilizada é preciso fazer o override de duas funções: `onListen` e `onCancel`.
 
 Agora vou explicar de forma breve para que serve cada método desse e o método start que não foi citado anteriormente.
 
-O método start serve para registrarmos o nosso sensor e ativa-lo. Na linha 17, nós pegarmos o gerenciador de sensores do Andorid. Dentro dele vamos ter uma infinidade de possibilidades de sensores, por isso na linha 18 nós pegarmos um sensor especifico que é o de temperatura ambiente. Por ultimo, nós registramos esse sensor.
+O método start serve para registrarmos o nosso sensor e ativa-lo. Essa função recupera o gerenciador de sensores do andorid, dentro dele vamos ter uma infinidade de possibilidades de sensores, por isso na linha seguinte nós pegarmos um sensor especifico que é o de temperatura ambiente. Por ultimo, nós registramos esse sensor através do `registerListener`.
 
-O método onSensorChanged é chamado toda vez que o valor da temperatura ambiente mudar. Quando isso ocorre nós verificamos se o event recebido é diferente de Null, caso seja verdade, recuperamos o valor da temperatura e publicamos na nosso canal através da linha 25. Quando usamos sink?.success estamos dizendo que o valor passado por parâmetro será enviado para o Flutter.
+O método `onSensorChanged` é chamado toda vez que o valor da temperatura ambiente mudar. Quando isso ocorre nós verificamos se o event recebido é diferente de Null, caso seja verdade, recuperamos o valor da temperatura e publicamos na nosso canal. Quando usamos `sink?.success` estamos dizendo que o valor passado por parâmetro será enviado para o Flutter.
 
-Nesse exemplo não precisamos usar a função onAccuracyChanged, porém precisamos ter ela implementada pois faz parte do contrato da nossa interface.
+Nesse exemplo não precisamos usar a função `onAccuracyChanged`, porém precisamos ter ela implementada pois faz parte do contrato da nossa interface.
 
 O metodo onListen é o responsável por configurar o nosso canal de eventos que irá transmitir os dados do nativo para o flutter.
 
-E por ultimo, o método onCancel que serve para limpar nossa stream, linha 37 e cancelar o registro do sensor na linha 38. Fazer isso é uma
-boa prática para não consumir recursos quando não estivermos mais usando o sensor.
+E por ultimo, o método onCancel que serve para limpar nossa stream e cancelar o registro do sensor. Fazer isso é uma boa prática para não consumir recursos quando não estivermos mais usando o sensor.
 
-Agora que temos nossa classe de stream criada, basta criarmos uma instância dela na nossa classe MainActivity e passar essa instância no parâmetro do método setStreamHandler do EventChannel.
+Agora que temos nossa classe de stream criada, basta criarmos uma instância dela na nossa classe MainActivity e passar essa instância no parâmetro do método `setStreamHandler` do EventChannel.
 
 ```
 private var temperature: Temperature = Temperature()
