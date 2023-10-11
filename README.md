@@ -8,6 +8,7 @@ plataforma android, pois conseguimos mostrar exemplos mais interessantes com os 
 
 ## Exemplos que essa aplicação oferece
 [Modificar o brilho da tela do sistema operacional do android através de um componente no flutter.](#modificar-o-brilho-da-tela-do-sistema-operacional)
+
 [Utilizar o sensor de temperatura ambiente do emulador do android e exibir o valor da temperatura em tempo real no Flutter.](#sensor-de-temperatura)
 
 ## Teoria
