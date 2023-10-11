@@ -7,9 +7,9 @@ Os métodos que serão abordados funcionam tanto para se comunicar em Kotlin qua
 plataforma android, pois conseguimos mostrar exemplos mais interessantes com os recursos disponiveis no emulador, pois o simulador do iOS é limitado em relação a recursos como conectividade com sensores, por exemplo.
 
 ## Exemplos que essa aplicação oferece
-[Modificar o brilho da tela do sistema operacional através de um componente no flutter.](#modificar-o-brilho-da-tela-do-sistema-operacional)
+[Modificar o brilho da tela do sistema operacional através de um componente no flutter.](#-modificar-o-brilho-da-tela-do-sistema-operacional)
 
-[Utilizar o sensor de temperatura ambiente do emulador e exibir o valor da temperatura em tempo real no Flutter.](#sensor-de-temperatura)
+[Utilizar o sensor de temperatura ambiente do emulador e exibir o valor da temperatura em tempo real no Flutter.](#%EF%B8%8F-sensor-de-temperatura)
 
 ## Teoria
 
@@ -25,79 +25,83 @@ no dart da forma que bem entendermos.
 
 Este repositório possui duas branchs. Na main foi disponiblizado o código completo e a baseApp, possui um app base com as telas que vamos usar para este exemplo. Aqueles que quiserem podem utilizar a segunda branch e seguir o passo a passo dessse tutorial.
 
-### Modificar o brilho da tela do sistema operacional
-Com o app base na sua máquina, o primeiro passo que vamos realizar antes de começar a mexer com o channel é irmos até o arquivo Android
-Manifest.xml que fica em /android/app/src/main e adicionar a linha abaixo dentro da dentro da TAG <manifest></manifest>
+### 💡 Modificar o brilho da tela do sistema operacional 
+Com o app base na sua máquina, o primeiro passo que vamos realizar antes de começar a mexer com o channel é irmos até o arquivo `AndroidManifest.xml` que fica em `/android/app/src/main` e adicionar a linha abaixo dentro da dentro da TAG `<manifest> </manifest>`
 
-```
+```xml
 <uses-permission android:name="android.permission.WRITE_SETTINGS"
 tools:ignore="ProtectedPermissions" />
 ```
-Como a atualização do brilho de tela envolve mexer com recursos do próprio sistema operacional precisamos que essa permissão esteja sinalizada do AndroidManifest. Bem semelhante com a permissão de internet, geolocalização e etc.
+Como a atualização do brilho de tela envolve mexer com recursos do próprio sistema operacional precisamos que essa permissão esteja sinalizada no AndroidManifest. Bem semelhante com a permissão de internet, geolocalização e etc.
 
-Uma vez que o passo acima foi realizado podemos focar no channel em si. Agora vamos criar um arquivo chamado channel.dart e colar o trecho de código abaixo.
+Uma vez que o passo acima foi realizado podemos focar no channel em si. Agora vamos criar um arquivo chamado `brightness_channel.dart` e colar o trecho de código abaixo:
 
-```
+```dart
 import 'dart:developer';
 import 'package:flutter/services.dart';
 
-class Channel {
-  static const _platform = MethodChannel('br.com.brightness');
+class BrightnessChannel {
+  final _brightnessChannel = const MethodChannel(
+    'com.example.platformchannel/brightness',
+  );
 
   Future<bool> checkPermission() async {
     try {
-      var result = await _platform.invokeMethod('checkPermission');
+      var result = await _brightnessChannel.invokeMethod('checkPermission');
       return result;
-    } catch (e) {
-      log(e.toString());
+    } catch (error) {
+      log(error.toString());
       return false;
     }
   }
 
   Future<void> openPermissionSettings() async {
     try {
-      await _platform.invokeMethod('openPermissionSettings');
-    } catch (e) {
-      log(e.toString());
+      await _brightnessChannel.invokeMethod('openPermissionSettings');
+    } catch (error) {
+      log(error.toString());
     }
   }
 
   Future<void> changeBrightnessScreen(int value) async {
     try {
-      await _platform.invokeMethod('changeBrightnessScreen', value);
-    } catch (e) {
-      log(e.toString());
+      await _brightnessChannel.invokeMethod('changeBrightnessScreen', value);
+    } catch (error) {
+      log(error.toString());
     }
   }
 }
 
 ```
 
-Explicando o código, na linha 5 nós vamos criar uma instância do nosso MethodChannel e como parâmetro devemos passar uma String que vai ser o identificador único desse canal. Além disso, teremos três funções principais nesse arquivo:
+Explicando o código, na linha 5 nós vamos criar uma instância do nosso MethodChannel e como parâmetro devemos passar uma String que vai ser o identificador único desse canal. É recomendável utilizar o nome do pacote do projeto, vito que ele é um identificador único, e incrementar um nome referente a finalidade do channel criado.
 
-**checkPermission:** Função que verifica se o aplicativo possui permissão para alterar o brilho de tela do dispositivo. Essa função retorna um boleano com o status da permissão.
+Além disso, teremos três funções principais nesse arquivo:
 
-**openPermissionSettings:** Função que pode redirecionar o usuário para a tela de permissões no dispositivo do usuário.
+`checkPermission:` Função que verifica se o aplicativo possui permissão para alterar o brilho de tela do dispositivo. Essa função retorna um boleano com o status da permissão.
 
-**changeBrightnessScreen:** Função que altera o valor do brilho. Essa função recebe um int que representa a intensidade da luminosidade que a tela deve ter.
+`openPermissionSettings:` Função que pode redirecionar o usuário para a tela de permissões no dispositivo.
+
+`changeBrightnessScreen:`Função que altera o valor do brilho. Essa função recebe um int que representa a intensidade da luminosidade que a tela deve ter.
 
 As três funções são bastante semelhantes. Todas possuem um try catch, onde no catch apenas realizamos um print log com um possível erro e
 nos demais cenários nós utilizamos a seguinte sintaxe:
 
-```
+```dart
 await _platform.invokeMethod(STRING_NAME_METHOD, [OPCIONAL_PARAM]);
 ```
-Quando usamos a variável que representa a nossa instância MethodChannel podemos acessar o método **invokeMethod**. Essa função recebe como parâmetro uma String que representa o nome da função que queremos executar no lado do nativo (quando chegarmos na parte nativa, vamos entender melhor essa conexão). O segundo parâmetro é opcional. Se olharmos as linhas 9, 19 e 27 veremos que apenas no último caso usamos esse parâmetro. Ele representa um valor que queremos passar para o lado nativo e lá podemos recuperar esse dado que foi passado e realizar alguma operação, por exemplo.
+Quando usamos a variável que representa a nossa instância MethodChannel podemos acessar o método `invokeMethod`. Essa função recebe como parâmetro uma String que representa o nome da função que queremos executar no lado do nativo (quando chegarmos na parte nativa, vamos entender melhor essa conexão). O segundo parâmetro é opcional. Se olharmos as linhas 9, 19 e 27 veremos que apenas no último caso usamos esse parâmetro. Ele representa um valor que queremos passar para o lado nativo e lá podemos recuperar esse dado que foi passado e realizar alguma operação, por exemplo.
 
-Para realizar esta etapa recomendo abrir a pasta Android do projeto Flutter no próprio Android Studio. Feito isso você deve acessar o arquivo MainActivity. Ele deve estar semelhante a imagem abaixo.
+Para realizar a próxima etapa recomendo abrir a pasta `android` do projeto Flutter no próprio Android Studio. Feito isso você deve acessar o arquivo `MainActivity.kt`. Ele deve estar semelhante a imagem abaixo.
 
 [COLOCAR IMAGEM AQUI]
 
-O primeiro passo para usarmos o channel no Kotlin é utilizar a função configureFlutterEngine. Como no arquivo MainActivity nossa classe já extende a classe FlutterActivity (linha 5 da imagem) quando escrevermos o método já teremos o autocomplete sugerido pela IDE. O próximo passo deve ser criar a comunicaçao do lado do nativo. O código abaixo representa essas duas etapas.
+O primeiro passo para usarmos o channel no Kotlin é utilizar a função `configureFlutterEngine`. Como no arquivo MainActivity nossa classe já extende a classe FlutterActivity (linha 5 da imagem) quando escrevermos o método já teremos o autocomplete sugerido pela IDE. O próximo passo deve ser criar a comunicaçao do lado do nativo. O código abaixo representa essas duas etapas.
 
-```
+```dart
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
 
         }
@@ -105,11 +109,11 @@ O primeiro passo para usarmos o channel no Kotlin é utilizar a função configu
 
 ```
 
-O primeiro parâmetro é flutterEngine.dartExecutor.binaryMessenger. Esse parâmetro diz respeito a como as mensagens serão transmitidas ou recebidas pelo canal. Já o segundo parâmetro é uma String com o nome do channel. É importante que esse nome seja o mesmo que definimos na criação do nosso MethodChannel do dart no lado do Flutter. Feito isso chamamos o método setMethodCallHandler que é responsável por registrar o nosso channel e disponibilizar ele para uso. Quando registramos o nosso channel temos acesso a duas variáveis call e result. Veremos como elas funcionam, mas de forma resumida: Através da variável call conseguimos pegar os parâmetros que enviamos através do Flutter e com a variável result podemos retornar dados para o Flutter.
+O primeiro parâmetro é flutterEngine.dartExecutor.binaryMessenger. Esse parâmetro diz respeito a como as mensagens serão transmitidas ou recebidas pelo canal. Já o segundo parâmetro é uma String com o nome do channel. É importante que esse nome seja o mesmo que definimos na criação do nosso MethodChannel do dart no lado do Flutter. Feito isso, chamamos o método setMethodCallHandler que é responsável por registrar o nosso channel e disponibilizar ele para uso. Quando registramos o nosso channel temos acesso a duas variáveis call e result. Veremos como elas funcionam, mas de forma resumida: Através da variável call conseguimos pegar os parâmetros que enviamos através do Flutter e com a variável result podemos retornar dados para o Flutter.
 
 O Código abaixo já possui todos os exemplo que vamos precisar para fazer as três funções que criamos no dart funcionar.
 
-```
+```kotlin
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -120,12 +124,12 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
 
-    private val CHANNEL = "br.com.brightness"
+  private val BRIGHTNESSS_CHANNEL_NAME = "com.example.platformchannel/brightness"
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, BRIGHTNESSS_CHANNEL_NAME).setMethodCallHandler { call, result ->
             when(call.method){
                 "checkPermission" ->{
                     val settingsCanWrite = Settings.System.canWrite(context)
@@ -149,57 +153,46 @@ class MainActivity: FlutterActivity() {
 }
 ```
 
-Em Kotlin a estrutura de condição switch pode ser representada pela comando when. Se olharmos da linha 17 ate a 36 o que temos é um switch case em Kotlin, onde dado uma String realizamos uma operação diferente para cada uma das opções, linha 18, 21, 25 e 29. Se a string passada não for igual a nenhum desses casos nós caímos na linha 34 onde lançamos uma exception para o Flutter avisando que nenhum dos métodos solicitados existe. Lembram do primeiro parâmetro que passamos ao chamar o métodoinvokeMethod no Flutter? Aquela String que passamos é acessada na linha 17 usando call.method.
+Em Kotlin a estrutura de condição switch pode ser representada pela comando when, onde dado uma String realizamos uma operação diferente para cada uma das opções. Se a string passada não for igual a nenhum desses casos nós caímos no else onde lançamos uma exception para o Flutter avisando que nenhum dos métodos solicitados existe. Lembram do primeiro parâmetro que passamos ao chamar o método `invokeMethod` no Flutter? Aquela String que passamos é acessada dentro dos parenteses do comando `when` usando call.method.
 
-Explicação do código acima:
-- Na linha 19, nós recuperamos o status se o dispositivo possui permissão para mudar o brilho da tela ou não. Depois de recuperado o status,
-na 20 retornamos esse valor para o Flutter.
-- Na linha 23 recuperamos a tela de configurações do próprio dispositivo Android e na linha 24 navegamos para ela.
-- Na linha 27 recuperamos o valor do brilho que foi passado do Flutter para o Kotlin e na linha 28 chamamos a função que muda o brilho da
-tela passando o valor que pegamos do Flutter no último parâmetro.
+Explicação do código acima para cada uma das condições:
+- `checkPermission`: Recupera o status que diz se o dispositivo possui permissão para mudar o brilho da tela ou não. Depois de recuperado o status  é retornado para o flutter através do comando `result.success(VALUE)`.
+- `openPermissionSettings`:  Recupera a tela de configurações do próprio dispositivo android e ao chamar o método `startActivity` navega para ela.
+- `changeBrightnessScreen` Recupera o valor do brilho que foi passado do Flutter para o Kotlin, através do comando `call.arguments!!`, e posteriormente chama a função que muda o brilho da
+tela passando o valor obtido..
 
-Para finalizar o primeiro exemplo basta acessarmos o arquivo screen1.dart e chamar as funções que criamos na classe Channel. Vamos segui as seguintes etapas:
+Para finalizar o primeiro exemplo basta acessarmos o arquivo `method_channel_example_page.dart` e chamar as funções que criamos na classe `BrightnessChannel`. Vamos segui as seguintes etapas:
 
-1 - Instanciar o objeto acima do método build.
-
-```
-final _channel = Channel();
+1. Instanciar o objeto acima do método build.
+```dart
+final _brightnessChannel = BrightnessChannel();
 ```
 
-2 - No método onChange do componente Slider vamos adicionar a seguinte lógica.
-```
-_channel.changeBrightnessScreen(value.toInt());
-  setState(() {
-    currentValue = value;
-  });
+2. No método onChange do componente Slider vamos adicionar o comando abaixo ante do setState.
+```dart
+ _brightnessChannel.changeBrightnessScreen(value.toInt());
 ```
 
-Na linha 6 nós chamamos a função changeBrightnessScreen e passamos um valor inteiro. Nas linhas de 7 a 8 nós usamos um setState apenas para o componente trocar de valor na tela.
-
-3 - No onPressed do botão "Verificar permissão" nós vamos adicionar a seguinte lógica:
-
-```
-var status = await _channel.checkPermission();
+3. No onPressed do botão "Verificar permissão" nós vamos adicionar a seguinte lógica:
+```dart
+bool status = await _channel.checkPermission();
 if (status == false) {
   _showPermissionDialog();
 }
 ```
-Na linha 3 vamos chamar a função que retorna um boleano para saber se o aplicativo tem permissão para modificar o brilho. Nas linhas de 5 a 7 fazemos uma verificação, se o usuário ainda não tiver a permissão concedida nós vamos abrir uma modal na tela.
+A chamada da funcão `checkPermission` retorna se o usuário possui a permissão necessária para alterar o brilho da tela. Se o usuário ainda não tiver a permissão concedida uma modal irá aparecer solicitando a permissão.
 
-4 - No botão da modal chamado Permissões vamos adicionar a chamada da função que abre a tela de permissões do android.
-```
+4. No botão da modal chamado "Permissões" vamos adicionar a chamada da função que abre a tela de permissões do android.
+```dart
 await _channel.openPermissionSettings();
 Navigator.pop(context);
 ```
 
-Feito isso, basta rodar o aplicativo e realizar o teste. Vale ressaltar que, se você tentar modificar o brilho da tela antes de conceder a permissão nada irá acontecer e no terminal você receberá um erro dizendo que ainda não possui permissão para mudar as configurações do dispositivo. Se repararmos, quando mudamos a posição do círculo na barra do componente de slides no Flutter e realizamos o scroll para ver a barra de tarefas do android, a barra onde podemos mudar o brilho fica
-com o círculo no mesmo local que deixamos no Flutter.
+Feito isso, basta rodar o aplicativo e realizar o teste. Vale ressaltar que se você tentar modificar o brilho da tela antes de conceder a permissão nada irá acontecer e no terminal você receberá um erro dizendo que ainda não possui permissão para mudar as configurações do dispositivo. Se repararmos, quando mudamos a posição do círculo na barra do componente de slides no Flutter e realizamos o scroll para ver a barra de tarefas do android, a barra onde podemos mudar o brilho fica com o círculo no mesmo local que deixamos no Flutter.
 
-observação: Se você emular este exemplo pelo computador só conseguimos ver o brilho mudando por conta da barra do próprio sistema
-operacional que é alterada. Contudo, quando forem testar recomendo emular este primeiro exemplo no device físico para verem a intensidade
-do brilho mudando.
+`observação:` Se você emular este exemplo pelo computador só conseguirá ver o brilho mudando por conta da barra do próprio sistema operacional que é alterada. Contudo, quando forem testar recomendo emular este primeiro exemplo no device físico para verem a intensidade do brilho mudando.
 
-### Sensor de temperatura
+### 🌡️ Sensor de temperatura
 O próximo exemplo que vamos criar é o de enviar dados do sensor de temperatura do android para o Flutter. Este exemplo é um pouco diferente, como não sabemos exatamente em que momento o Kotlin vai enviar os dados para o Flutter não podemos usar o MethodChannel, pois ele abre uma comunicação e depois que os dados são transmitidos o fluxo se encerra. Nesse caso, nós iremos usar o EventChannel, que deixa um canal aberto, onde pode ter dados sendo transmitidos do lado nativo para o Flutter a qualquer momento. O seu fluxo é baseado em Stream (recomendo dar uma estudada em stream caso ainda não saiba como ele funciona).
 
 Primeiro, nós precisamos criar um novo arquivo chamado temperature.dart e colar o trecho de código abaixo:
