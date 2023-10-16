@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-class Screen2 extends StatefulWidget {
-  const Screen2({Key? key}) : super(key: key);
+class EventChannelExamplePage extends StatefulWidget {
+  const EventChannelExamplePage({Key? key}) : super(key: key);
 
   @override
-  _Screen2State createState() => _Screen2State();
+  _EventChannelExamplePageState createState() =>
+      _EventChannelExamplePageState();
 }
 
-class _Screen2State extends State<Screen2> {
+class _EventChannelExamplePageState extends State<EventChannelExamplePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +21,7 @@ class _Screen2State extends State<Screen2> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             StreamBuilder<double>(
-              // stream: _temperature.getTemperatureStream,
+              stream: null,
               builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
                 if (snapshot.hasData) {
                   return Text("temperatura ${snapshot.data}");

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:platformchannel/screen1.dart';
-import 'package:platformchannel/screen2.dart';
+import 'package:platformchannel/method_channel_example_page.dart';
+import 'package:platformchannel/event_channel_example_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const Screen1(),
+                    builder: (context) => const MethodChannelExamplePage(),
                   ),
                 );
               },
@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const Screen2(),
+                    builder: (context) => const EventChannelExamplePage(),
                   ),
                 );
               },
