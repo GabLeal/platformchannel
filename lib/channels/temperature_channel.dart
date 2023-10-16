@@ -16,10 +16,9 @@ class TemperatureChannel {
 
   TemperatureChannel() {
     _temperatureChannel.receiveBroadcastStream().listen((event) {
-      log(event.toString());
       _streamController.sink.add(event);
-    }, onError: (e) {
-      log(e.toString());
+    }, onError: (erro) {
+      log(erro.toString());
     });
   }
 
@@ -35,8 +34,8 @@ class TemperatureChannel {
     try {
       var result = await _activeSensorChannel.invokeMethod('activeSensor');
       log(result.toString());
-    } catch (e) {
-      log(e.toString());
+    } catch (erro) {
+      log(erro.toString());
     }
   }
 }
