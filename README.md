@@ -114,7 +114,7 @@ O primeiro passo para usarmos o channel no Kotlin é utilizar a função `config
 
 ```
 
-O primeiro parâmetro é flutterEngine.dartExecutor.binaryMessenger. Esse parâmetro diz respeito a como as mensagens serão transmitidas ou recebidas pelo canal. Já o segundo parâmetro é uma String com o nome do channel. É importante que esse nome seja o mesmo que definimos na criação do nosso MethodChannel do dart no lado do Flutter. Feito isso, chamamos o método setMethodCallHandler que é responsável por registrar o nosso channel e disponibilizar ele para uso. Quando registramos o nosso channel temos acesso a duas variáveis call e result. Veremos como elas funcionam, mas de forma resumida: Através da variável call conseguimos pegar os parâmetros que enviamos através do Flutter e com a variável result podemos retornar dados para o Flutter.
+O primeiro parâmetro do MethodChannel é flutterEngine.dartExecutor.binaryMessenger, esse parâmetro diz respeito a como as mensagens serão transmitidas ou recebidas pelo canal. Já o segundo parâmetro é uma String com o nome do channel. É importante que esse nome seja o mesmo que definimos na criação do nosso MethodChannel do dart no lado do Flutter. Feito isso, chamamos o método setMethodCallHandler que é responsável por registrar o nosso channel e disponibilizar ele para uso. Quando registramos o nosso channel temos acesso a duas variáveis call e result. Veremos como elas funcionam, mas de forma resumida: Através da variável call conseguimos pegar os parâmetros que enviamos através do Flutter e com a variável result podemos retornar dados para o Flutter.
 
 O Código abaixo já possui todos os exemplo que vamos precisar para fazer as três funções que criamos no dart funcionar.
 
@@ -158,13 +158,13 @@ class MainActivity: FlutterActivity() {
 }
 ```
 
-Em Kotlin a estrutura de condição switch pode ser representada pela comando when, onde dado uma String realizamos uma operação diferente para cada uma das opções. Se a string passada não for igual a nenhum desses casos nós caímos no else onde lançamos uma exception para o Flutter avisando que nenhum dos métodos solicitados existe. Lembram do primeiro parâmetro que passamos ao chamar o método `invokeMethod` no Flutter? Aquela String que passamos é acessada dentro dos parenteses do comando `when` usando call.method.
+Em Kotlin a estrutura de condição switch pode ser representada pela comando when, onde dado uma String realizamos uma operação diferente para cada uma das opções. Se a string passada não for igual a nenhum desses casos nós caímos no else onde lançamos uma exception para o Flutter avisando que nenhum dos métodos solicitados existe. Lembram do primeiro parâmetro que passamos ao chamar o método `invokeMethod` no Flutter? Aquela String que passamos é acessada dentro dos parenteses do comando `when` usando `call.method`.
 
 Explicação do código acima para cada uma das condições:
 - `checkPermission`: Recupera o status que diz se o dispositivo possui permissão para mudar o brilho da tela ou não. Depois de recuperado o status  é retornado para o flutter através do comando `result.success(VALUE)`.
 - `openPermissionSettings`:  Recupera a tela de configurações do próprio dispositivo android e ao chamar o método `startActivity` navega para ela.
 - `changeBrightnessScreen` Recupera o valor do brilho que foi passado do Flutter para o Kotlin, através do comando `call.arguments!!`, e posteriormente chama a função que muda o brilho da
-tela passando o valor obtido..
+tela passando o valor obtido.
 
 Para finalizar o primeiro exemplo basta acessarmos o arquivo `method_channel_example_page.dart` e chamar as funções que criamos na classe `BrightnessChannel`. Vamos segui as seguintes etapas:
 
@@ -173,7 +173,7 @@ Para finalizar o primeiro exemplo basta acessarmos o arquivo `method_channel_exa
 final _brightnessChannel = BrightnessChannel();
 ```
 
-2. No método onChange do componente Slider vamos adicionar o comando abaixo ante do setState.
+2. No método onChange do componente Slider vamos adicionar o comando abaixo antes do setState que já está dentro dessa função no código que foi disponibilizado.
 ```dart
  _brightnessChannel.changeBrightnessScreen(value.toInt());
 ```
