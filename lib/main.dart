@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:platformchannel/method_channel_example_page.dart';
-import 'package:platformchannel/event_channel_example_page.dart';
+import 'package:platformchannel/pages/method_channel_example_page.dart';
+import 'package:platformchannel/pages/event_channel_example_page.dart';
 
 void main() {
   runApp(const MyApp());
