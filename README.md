@@ -94,7 +94,7 @@ Quando usamos a variável que representa a nossa instância MethodChannel podemo
 
 Para realizar a próxima etapa recomendo abrir a pasta `android` do projeto Flutter no próprio Android Studio. Feito isso você deve acessar o arquivo `MainActivity.kt`. Ele deve estar semelhante a imagem abaixo.
 
-[COLOCAR IMAGEM AQUI]
+<img title="dots emulator" alt="Image code base file MainActivity.kt" src="screenshot/main_activity_code.png">
 
 O primeiro passo para usarmos o channel no Kotlin é utilizar a função `configureFlutterEngine`. Como no arquivo MainActivity nossa classe já extende a classe FlutterActivity (linha 5 da imagem) quando escrevermos o método já teremos o autocomplete sugerido pela IDE. O próximo passo deve ser criar a comunicaçao do lado do nativo. O código abaixo representa essas duas etapas.
 
@@ -372,16 +372,16 @@ Por último, no botão "Ativar sensor de temperatura" vamos chamar a função ac
 Feito isso, podemos compilar o aplicativo e para testar vamos realizar os seguintes passos no emulador:
 
 1. Clicar no ícone dos três pontinhos. Último ícone da barra que fica do lado do emulador
-<img title="dots emulator" alt="Alt text" src="screenshot/dots_emulator.png">
+<img title="dots emulator" alt="Image highlighting emulator dots" src="screenshot/dots_emulator.png">
 
 2. Selecione a opção "Virtual sensors”.
-<img title="virtual sensors emulator" alt="Alt text" src="screenshot/virtual_sensors_emulator.png">
+<img title="virtual sensors emulator" alt="Image highlighting emulator virtual sensors" src="screenshot/virtual_sensors_emulator.png">
 
 3. Nessa tela você terá acesso a vários sensores que temos em um dispositivo android. No nosso caso vamos utilizar o sensor de "Ambient temperature".
 
-<img title="ambient temperature emulator" alt="Alt text" src="screenshot/ambient_temperature_emulator.png">
+<img title="ambient temperature emulator" alt="Image highlighting emulator ambient temperature" src="screenshot/ambient_temperature_emulator.png">
 
 
 Ao testar o app ele deve se parecer com o resultado abaixo:
 
-<img title="gif do exemplo do sensor de temperatura" alt="Alt text" src="screenshot/sensor_example.gif">
+<img title="gif do exemplo do sensor de temperatura" alt="git of the change temperature functionality" src="screenshot/sensor_example.gif">
