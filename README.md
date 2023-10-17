@@ -25,6 +25,11 @@ no dart da forma que bem entendermos.
 
 Este repositório possui duas branchs. Na main foi disponiblizado o código completo e a baseApp, possui um app base com as telas que vamos usar para este exemplo. Aqueles que quiserem podem utilizar a segunda branch e seguir o passo a passo dessse tutorial.
 
+Para acessar a segunda branch, após clonar o repositório basta usar comando abaixo no seu terminal:
+```git
+git checkout baseapp
+```
+
 ### 💡 Modificar o brilho da tela do sistema operacional 
 Com o app base na sua máquina, o primeiro passo que vamos realizar antes de começar a mexer com o channel é irmos até o arquivo `AndroidManifest.xml` que fica em `/android/app/src/main` e adicionar a linha abaixo dentro da dentro da TAG `<manifest> </manifest>`
 
@@ -74,7 +79,7 @@ class BrightnessChannel {
 
 ```
 
-Explicando o código, na linha 5 nós vamos criar uma instância do nosso MethodChannel e como parâmetro devemos passar uma String que vai ser o identificador único desse canal. É recomendável utilizar o nome do pacote do projeto, vito que ele é um identificador único, e incrementar um nome referente a finalidade do channel criado.
+Explicando o código, na linha 5 nós vamos criar uma instância do nosso MethodChannel e como parâmetro devemos passar uma String que vai ser o identificador único desse canal. É recomendável utilizar o nome do pacote do projeto, vito que ele é um identificador único, e concatenar um nome referente a finalidade do channel criado.
 
 Além disso, teremos três funções principais nesse arquivo:
 
@@ -82,15 +87,15 @@ Além disso, teremos três funções principais nesse arquivo:
 
 `openPermissionSettings:` Função que pode redirecionar o usuário para a tela de permissões no dispositivo.
 
-`changeBrightnessScreen:`Função que altera o valor do brilho. Essa função recebe um int que representa a intensidade da luminosidade que a tela deve ter.
+`changeBrightnessScreen:` Função que altera o valor do brilho. Essa função recebe um int que representa a intensidade da luminosidade que a tela deve ter.
 
 As três funções são bastante semelhantes. Todas possuem um try catch, onde no catch apenas realizamos um print log com um possível erro e
 nos demais cenários nós utilizamos a seguinte sintaxe:
 
 ```dart
-await _platform.invokeMethod(STRING_NAME_METHOD, [OPCIONAL_PARAM]);
+await _brightnessChannel.invokeMethod(STRING_NAME_METHOD, [OPCIONAL_PARAM]);
 ```
-Quando usamos a variável que representa a nossa instância MethodChannel podemos acessar o método `invokeMethod`. Essa função recebe como parâmetro uma String que representa o nome da função que queremos executar no lado do nativo (quando chegarmos na parte nativa, vamos entender melhor essa conexão). O segundo parâmetro é opcional. Se olharmos as linhas 9, 19 e 27 veremos que apenas no último caso usamos esse parâmetro. Ele representa um valor que queremos passar para o lado nativo e lá podemos recuperar esse dado que foi passado e realizar alguma operação, por exemplo.
+Quando usamos a variável que representa a nossa instância MethodChannel podemos acessar o método `invokeMethod`. Essa função recebe como parâmetro uma String que representa o nome da função que queremos executar no lado do nativo (quando chegarmos na parte nativa, vamos entender melhor essa conexão). O segundo parâmetro é opcional. Ao analisar as três funções, veremos que apenas no último caso usamos esse parâmetro opcional. Ele representa um valor que queremos passar para o lado nativo e lá podemos recuperar esse dado que foi passado e realizar alguma operação, por exemplo.
 
 Para realizar a próxima etapa recomendo abrir a pasta `android` do projeto Flutter no próprio Android Studio. Feito isso você deve acessar o arquivo `MainActivity.kt`. Ele deve estar semelhante a imagem abaixo.
 
